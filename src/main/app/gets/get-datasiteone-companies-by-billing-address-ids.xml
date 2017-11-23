@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <flow name="getDatasiteOneCompaniesByBillingAddressIds" processingStrategy="synchronous">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="VM_GET_DATASITEONE_COMPANIES_BY_BILLING_ADDRESS_IDS" connector-ref="VM_IN_MEMORY" doc:name="VM_GET_DATASITEONE_COMPANIES_BY_BILLING_ADDRESS_IDS"/>
+
+        <json:json-to-object-transformer returnClass="java.lang.Object" doc:name="JSON to Object"/>
+            <scripting:component doc:name="getIds">
+                <scripting:script engine="Groovy" file="groovy/array2string.groovy"/>
+            </scripting:component>
+
+        <logger message="billingAddressIds: #[payload]" level="INFO" category="VM_GET_DATASITEONE_COMPANY_BY_BILLING_ADDRESS_IDS" doc:name="[DEBUG]Log Initial Payload"/>
+
+
+        <sfdc:query config-ref="Salesforce__Basic_Authentication" 
+        query="SELECT Billing_Address__c,Email_Address__c,First_Name__c,Last_Name__c,Phone__c,Billing_Company__c,DatasiteOne_Project__c FROM DatasiteOne_Company__c WHERE Billing_Address__c in #[payload] AND DatasiteOne_Project__c in (SELECT Id FROM DatasiteOne_Project__c WHERE Project_Status__c in ('Active', 'Build Period', 'Hibernation', 'Suspended', 'Closure Request') )" doc:name="Salesforce"/>
+        <json:object-to-json-transformer mimeType="application/json" doc:name="Object to JSON"/>
+
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <logger level="ERROR" doc:name="Log Exception Summary" category="getDataSiteOneCompany" message="Exception Summary: #[exception.getSummaryMessage()]"/>
+            <set-payload doc:name="Set Payload" value="Unable to get DS1 Company by Billing Address Ids"/>
+            <set-property doc:name="400" propertyName="http.status" value="#[400]"/>
+        </catch-exception-strategy>
+    </flow>
+</mule>

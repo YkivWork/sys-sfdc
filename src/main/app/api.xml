@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    <http:listener-config name="api-httpListenerConfig" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <apikit:config name="api-config" raml="api.raml" consoleEnabled="false" doc:name="Router"/>
+    <flow name="api-main">
+        <http:listener config-ref="api_HTTP_Listener_Configuration" path="/api/*" doc:name="HTTP"/>
+        <apikit:router config-ref="api-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="api-console">
+        <http:listener config-ref="api_HTTP_Listener_Configuration" path="/console/*" doc:name="HTTP"/>
+        <apikit:console config-ref="api-config" doc:name="APIkit Console"/>
+    </flow>
+    <flow name="get:/health-check:api-config">
+        <flow-ref name="get-healthFlow" doc:name="get-healthFlow"/>
+
+    </flow>
+    <flow name="put:/billing/address:api-config">
+        <flow-ref name="updateBillingAddressFlow" doc:name="updateBillingAddressFlow"/>
+    </flow>
+    <flow name="put:/billing/company:api-config">
+        <flow-ref name="updateBillingCompanyFlow" doc:name="updateBillingCompanyFlow"/>
+    </flow>
+    <flow name="put:/datasiteone/project:api-config">
+        <flow-ref name="updateDatasiteOneProjectFlow" doc:name="updateDatasiteOneProjectFlow"/>
+    </flow>
+    <flow name="get:/billing/addresses:api-config">
+        <set-payload value="#[message.inboundProperties['http.query.params']['billing-address-ids']]" mimeType="text/json" doc:name="set Payload"/>
+        <flow-ref name="getBillingAddressesByBillingAddressIds" doc:name="getBillingAddressesByBillingAddressIds"/>
+    </flow>
+    <flow name="get:/datasiteone/companies/billingAddresses:api-config">
+        <set-payload value="#[message.inboundProperties['http.query.params']['billing-address-ids']]" mimeType="text/json" doc:name="set Payload"/>
+        <flow-ref name="getDatasiteOneCompaniesByBillingAddressIds" doc:name="getDatasiteOneCompaniesByBillingAddressIds"/>
+    </flow>
+    <flow name="get:/datasiteone/companies/billingCompanies:api-config">
+        <set-payload value="#[message.inboundProperties['http.query.params']['billing-company-ids']]" mimeType="text/json" doc:name="set Payload"/>
+        <flow-ref name="getDatasiteOneCompaniesByBillingCompanyIds" doc:name="getDatasiteOneCompaniesByBillingCompanyIds"/>
+    </flow>
+    <flow name="get:/billing/companies:api-config">
+        <set-payload value="#[message.inboundProperties['http.query.params']['billing-company-ids']]" mimeType="text/json" doc:name="set Payload"/>
+        <flow-ref name="getBillingCompaniesByBillingCompanyIds" doc:name="getBillingCompaniesByBillingCompanyIds"/>
+    </flow>
+    <flow name="get:/billing/company:api-config">
+        <set-payload value="#[message.inboundProperties.'http.query.params'.oracleid]" doc:name="Set Payload"/>
+        <flow-ref name="getBillingCompanyByOracleId" doc:name="getBillingCompanyByOracleId"/>
+    </flow>
+    <flow name="get:/datasiteone/company:api-config">
+        <set-payload value="#[message.inboundProperties.'http.query.params'.projectid]" doc:name="set Payload"/>
+        <flow-ref name="getDatasiteOneCompanyByProjectId" doc:name="getDatasiteOneCompanyByProjectId"/>
+    </flow>
+    <flow name="get:/datasiteone/project/{projectid}/filterByStatuses:api-config">
+        <set-payload value="#[message.inboundProperties.'http.uri.params'.projectid]" doc:name="Set Payload"/>
+        <flow-ref name="GET_PROJECT_BY_PROJECT_ID" doc:name="GET_PROJECT_BY_PROJECT_ID"/>
+    </flow>
+    <flow name="get:/users:api-config">
+        <set-payload value="#[message.inboundProperties['http.query.params']['userids']]" mimeType="text/json" doc:name="set Payload"/>
+        <flow-ref name="getUsersByUserIds" doc:name="getUsersByUserIds"/>
+    </flow>
+    <flow name="get:/workorder:api-config">
+        <set-payload value="#[message.inboundProperties.'http.query.params'.lastModifiedDate]" doc:name="Set  Payload"/>
+        <flow-ref name="getWorkOrdersByLastModifiedDate" doc:name="getWorkOrdersByLastModifiedDate"/>
+    </flow>
+    <flow name="get:/datasiteone/project/history/yesterday:api-config">
+        <flow-ref name="GetProjectHistoryByYesterday" doc:name="GetProjectHistoryByYesterday"/>
+    </flow>
+    <flow name="get:/datasiteone/company/history/yesterday:api-config">
+        <flow-ref name="GetCompanyHistoryByYesterday" doc:name="GetCompanyHistoryByYesterday"/>
+    </flow>
+    <flow name="get:/billing/companies/modifieddate/{date}:api-config">
+        <set-payload value="#[message.inboundProperties.'http.uri.params'.date]" doc:name="Set Payload"/>
+        <flow-ref name="getBillingCompaniesByLastModifiedDate" doc:name="getBillingCompaniesByLastModifiedDate"/>
+    </flow>
+    <flow name="get:/billing/addresses/modifieddate/{date}:api-config">
+        <set-payload value="#[message.inboundProperties.'http.uri.params'.date]" doc:name="Set Payload"/>
+        <flow-ref name="getBillingAddressesByLastModifiedDate" doc:name="getBillingAddressesByLastModifiedDate"/>
+    </flow>
+    <flow name="get:/billing/company/{id}:api-config">
+        <set-payload value="#[message.inboundProperties.'http.uri.params'.id]" doc:name="Set Payload"/>
+        <flow-ref name="getBillingCompanyById" doc:name="getBillingCompanyById"/>
+    </flow>
+    <flow name="get:/billing/address/{id}:api-config">
+        <set-payload value="#[message.inboundProperties.'http.uri.params'.id]" doc:name="Set Payload"/>
+        <flow-ref name="getBillingAddressById" doc:name="getBillingAddressById"/>
+    </flow>
+    <flow name="get:/datasiteone/company/{id}:api-config">
+        <set-payload value="#[message.inboundProperties.'http.uri.params'.id]" doc:name="Set Payload"/>
+        <flow-ref name="getDatasiteOneCompanyById" doc:name="getDatasiteOneCompanyById"/>
+    </flow>
+    <flow name="get:/datasiteone/company/history/{lastmaxcompanyhistoryid}:api-config">
+        <set-payload value="#[message.inboundProperties.'http.uri.params'.lastmaxcompanyhistoryid]" doc:name="Set Payload"/>
+        <flow-ref name="GetCompanyHistoryById" doc:name="GetCompanyHistoryById"/>
+    </flow>
+    <flow name="get:/datasiteone/project/history/{lastmaxprojecthistoryid}:api-config">
+        <set-payload value="#[message.inboundProperties.'http.uri.params'.lastmaxprojecthistoryid]" doc:name="Set Payload"/>
+        <flow-ref name="GetProjectHistoryById" doc:name="GetProjectHistoryById"/>
+    </flow>
+    <flow name="get:/datasiteone/project/{projectid}:api-config">
+        <set-payload value="#[message.inboundProperties.'http.uri.params'.projectid]" doc:name="Set Payload"/>
+        <flow-ref name="getDatasiteOneProjectByProjectId" doc:name="getDatasiteOneProjectByProjectId"/>
+    </flow>
+    <apikit:mapping-exception-strategy name="api-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>

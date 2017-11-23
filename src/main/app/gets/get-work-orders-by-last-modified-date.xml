@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <flow name="getWorkOrdersByLastModifiedDate" processingStrategy="synchronous">
+        <vm:inbound-endpoint exchange-pattern="request-response" path="VM_GET_WORK_ORDERS_BY_MODIFIED_DATE" connector-ref="VM_IN_MEMORY" doc:name="VM_GET_WORK_ORDERS_BY_MODIFIED_DATE"/>
+
+        <logger message="modifiedDate: #[payload]" level="INFO" category="VM_GET_WORK_ORDERS_BY_MODIFIED_DATE" doc:name="[DEBUG]Log Initial Payload"/>
+
+
+        <sfdc:query config-ref="Salesforce__Basic_Authentication" 
+        query="dsql:SELECT Address_1__c, Address_2__c, Address_3__c, Amount__c, City__c, Client_Order_ID__c, Client_SKU__c, Company_Name__c, Country__c, County__c, DatasiteOne_Project__c, Description__c, Due_Date__c, Email_Address__c, First_Name__c, Hourly_Rate__c, LastModifiedDate, Last_Name__c, Locality__c, Markup__c, Media_Type__c, Name, OwnerId, Phone__c, Postal_Code__c, Quantity__c, RecordTypeId, Service_Location__c, Shipping_Cost__c, State_Province__c, Status__c, Total_Hours_Cost__c, Total_Hours__c, Total_Media_Cost__c, Total_Pages_Scanned__c, Total_Scanning_Cost__c, Total_Shipping_Cost__c, Type_of_Service__c, Units__c FROM Work_Order__c WHERE Status__c = 'Completed' AND LastModifiedDate &gt; #[payload]" doc:name="Salesforce"/>
+        <json:object-to-json-transformer mimeType="application/json" doc:name="Object to JSON"/>
+
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <logger level="ERROR" doc:name="Log Exception Summary" category="getDataSiteOneCompany" message="Exception Summary: #[exception.getSummaryMessage()]"/>
+            <set-payload doc:name="Set Payload" value="Unable to get DS1 Company by Billing Company Ids: #[flowVars.modifiedDate]"/>
+            <set-property doc:name="400" propertyName="http.status" value="#[400]"/>
+        </catch-exception-strategy>
+    </flow>
+</mule>

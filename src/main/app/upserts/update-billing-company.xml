@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+    <flow name="updateBillingCompanyFlow" >
+        <vm:inbound-endpoint exchange-pattern="request-response" path="VM_UPDATE_BILLING_COMPANY" connector-ref="VM_IN_MEMORY" doc:name="VM"/>
+        <logger message="starting updateBillingCompanyFlow. Payload: #[payload]" level="DEBUG" category="com.merrillcorp.q2c" doc:name="[DEBUG] Log Payload"/>
+        <sfdc:upsert config-ref="Salesforce__Basic_Authentication" externalIdFieldName="Oracle_ID__c" type="Billing_Company__c" doc:name="Salesforce">
+            <sfdc:objects ref="#[payload]"/>
+        </sfdc:upsert>
+
+        <json:object-to-json-transformer mimeType="application/json" doc:name="Object to JSON"/>
+        <logger message="Ending updateBillingCompanyFlow. Payload: #[payload]" level="DEBUG" doc:name="[DEBUG] Log Payload" category="com.merrillcorp.q2c"/>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <logger message="#[exception.getSummaryMessage()]" level="ERROR" category="processcustomerFlow" doc:name="Logger"/>
+        </catch-exception-strategy>
+
+        
+    </flow>
+</mule>

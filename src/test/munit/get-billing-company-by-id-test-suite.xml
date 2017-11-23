@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd">
+    <munit:config name="munit" doc:name="MUnit configuration"/>
+    <spring:beans>
+        <spring:import resource="classpath:globals.xml"/>
+        <spring:import resource="classpath:gets/get-billing-company-by-id.xml"/>
+</spring:beans>
+    <munit:test name="get-billing-company-by-id-test-suite-getBillingCompanyByIdTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock Salesforce">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="Salesforce"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('examples/billing-company.json').asString()]" mimeType="application/json"/>
+        </mock:when>
+        <set-payload value="companyid" doc:name="Set Payload"/>
+        <flow-ref name="getBillingCompanyById" doc:name="getBillingCompanyById"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-payload>
+        </dw:transform-message>
+        <munit:assert-on-equals message="failed on Id" expectedValue="companyid" actualValue="#[payload[0].Id]" doc:name="Assert Equals"/>
+    </munit:test>
+</mule>

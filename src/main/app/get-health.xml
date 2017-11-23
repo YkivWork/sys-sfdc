@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd">
+    <flow name="get-healthFlow">
+        <logger message="Start-healthflow" level="INFO" category="com.merrillcorp.healthCheck" doc:name="Logger"/>
+        <sfdc:query config-ref="Salesforce__Basic_Authentication" query="SELECT Status__c FROM Work_Order__c LIMIT 1" doc:name="Salesforce"/>
+        <byte-array-to-object-transformer doc:name="Byte Array to Object"/>
+        <logger message="#[message.payload.hasNext() ? message.payload.next() : null]" level="DEBUG" category="com.merrillcorp.healthCheck" doc:name=" Log Payload"/>
+        <choice doc:name="Choice">
+            <when expression="#[message.exception != null]">
+                <set-payload value="{&quot;Status&quot;: &quot;Failure&quot;}" doc:name="SET_Error_Payload"/>
+                <set-property propertyName="http.status" value="500" doc:name="SET_Error_Status"/>
+            </when>
+            <otherwise>
+                <set-payload value="{&quot;Status&quot;: &quot;OK&quot;}" doc:name="SET_Success_Payload"/>
+                <set-property propertyName="http.status" value="200" doc:name="SET_Success_Status"/>
+            </otherwise>
+        </choice>
+        <logger message="End-healthflow" level="INFO" category="com.merrillcorp.healthCheck" doc:name="Logger"/>
+    </flow>
+</mule>

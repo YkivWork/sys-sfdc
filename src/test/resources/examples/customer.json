@@ -1,0 +1,9 @@
+{
+   "CUST_ACCOUNT_ID": "test",
+   "CUSTOMER_NAME": "Test",
+   "CUSTOMER_NUMBER": "Test",
+   "TAX_REFERENCE": "test",
+   "CUST_ACCT_SITES": {
+		"CUST_ACCT_SITES_ITEM": ["test1","test2"] 
+   }
+}

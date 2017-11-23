@@ -1,0 +1,33 @@
+[  
+   {  
+      "LastModifiedDate":"2017-07-31T15:59:27.000Z",
+      "Email_Address__c":null,
+      "LastReferencedDate":null,
+      "type":"Billing_Address__c",
+      "Billing_Address_ID__c":"a3hc0000000FNCiAAO",
+      "Locality__c":null,
+      "Name":"BA-118",
+      "Address_1__c":"Avenue Louise 326 Box 57",
+      "City__c":"Brussels",
+      "Contact_Information__c":null,
+      "CreatedById":"0051A00000D3XtMQAV",
+      "Address_3__c":null,
+      "Middle_Initial__c":null,
+      "Billing_Company__c":"a3ic0000001GtnQAAS",
+      "Country__c":"BE",
+      "IsDeleted":"false",
+      "LastViewedDate":null,
+      "Postal_Code__c":"1050",
+      "Oracle_ID__c":"155396",
+      "SystemModstamp":"2017-07-31T15:59:27.000Z",
+      "Address_2__c":"Suite 123",
+      "State_Province__c":null,
+      "CreatedDate":"2017-07-31T15:59:27.000Z",
+      "Phone__c":null,
+      "First_Name__c":null,
+      "Id":"testid",
+      "Physical_Address__c":"SA SOC Inves Finance Immob AV Louise<br>Avenue Louise 326 Box 57 <br>Suite 123<br>Brussels, 1050<br>BE",
+      "LastModifiedById":"0051A00000D3XtMQAV",
+      "Last_Name__c":null
+   }
+]

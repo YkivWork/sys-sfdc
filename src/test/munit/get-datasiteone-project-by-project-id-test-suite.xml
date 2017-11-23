@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <munit:config name="munit" doc:name="MUnit configuration"/>
+    <spring:beans>
+        <spring:import resource="classpath:globals.xml"/>
+        <spring:import resource="classpath:gets/get-datasiteone-project-by-project-id.xml"/>
+    </spring:beans>
+    <munit:test name="get-datasiteone-project-by-project-id-test-suite-getDatasiteOneProjectByProjectIdTest" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock Salesforce Get DatasiteOne Project">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="Salesforce"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[getResource('examples/datasiteone-project.json').asString()]" mimeType="application/json"/>
+
+        </mock:when>
+        <set-payload value="#['a27c0000005Rhn2AAC']" doc:name="Set Payload"/>
+        <flow-ref name="getDatasiteOneProjectByProjectId" doc:name="getDatasiteOneProjectByProjectId"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-payload>
+        </dw:transform-message>
+        <munit:assert-on-equals message="failed on get-datasiteone-project-by-project-id-test-suite-getDatasiteOneProjectByProjectIdTest" expectedValue="#['a27c0000005Rhn2AAC']" actualValue="#[payload[0].Salesforce_ProjectID__c]" doc:name="Assert Equals"/>
+    </munit:test>
+</mule>

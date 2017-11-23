@@ -1,0 +1,45 @@
+[
+  {
+    "LastModifiedDate": "2017-09-14T19:31:36.000Z",
+    "IsDeleted": "false",
+    "Billing_Company_ID__c": "a3i0U0000004EgtQAE",
+    "VAT__c": null,
+    "LastViewedDate": null,
+    "Customer_Order_Number__c": null,
+    "LastReferencedDate": null,
+    "type": "Billing_Company__c",
+    "Oracle_ID__c": "1487",
+    "Name": "Telephone & Data Systems",
+    "SystemModstamp": "2017-09-14T19:31:36.000Z",
+    "Oracle_Account_Number__c": "1467",
+    "CreatedById": "0051A00000D3XtMQAV",
+    "OwnerId": "0051A00000D3XtMQAV",
+    "CreatedDate": "2017-09-14T19:31:36.000Z",
+    "Account__c": null,
+    "Id": "a3i0U0000004EgtQAE",
+    "Billing_Company_Name__c": "Telephone & Data Systems",
+    "LastModifiedById": "0051A00000D3XtMQAV"
+  },
+    {
+    "LastModifiedDate": "2017-09-12T19:31:36.000Z",
+    "IsDeleted": "false",
+    "Billing_Company_ID__c": "b3i0U0000004EgtQAE",
+    "VAT__c": null,
+    "LastViewedDate": null,
+    "Customer_Order_Number__c": null,
+    "LastReferencedDate": null,
+    "type": "Billing_Company__c",
+    "Oracle_ID__c": "1481",
+    "Name": "STP Data Systems",
+    "SystemModstamp": "2017-09-14T19:31:36.000Z",
+    "Oracle_Account_Number__c": "1467",
+    "CreatedById": "0051A00000D3XtMQAV",
+    "OwnerId": "0051A00000D3XtMQAV",
+    "CreatedDate": "2017-09-14T19:31:36.000Z",
+    "Account__c": null,
+    "Id": "a3i0U0000004EgtQAE",
+    "Billing_Company_Name__c": "STP Data Systems",
+    "LastModifiedById": "0051A00000D3XtMQAV"
+  }
+  
+]

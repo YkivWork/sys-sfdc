@@ -1,0 +1,20 @@
+#%RAML 1.0 DataType
+
+properties: 
+  Id:
+    type: string
+    description: SFDC Opportunity Split Id
+    required: true
+  Is_Primary__c:
+      type: boolean
+      description: SFDC Opportunity Split Primary Owner
+      required: true
+      default: false
+  SplitPercentage:
+      type: number | integer
+      required: true
+      default: 0
+  SplitOwnerId:
+      type: string
+      description: SFDC Opportunity Split Owner Id
+      required: true 

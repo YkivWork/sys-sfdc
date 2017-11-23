@@ -1,0 +1,381 @@
+#%RAML 1.0
+baseUri: https://mocksvc.mulesoft.com/mocks/9e5ec0c1-f371-4bf0-a7c4-39677399a777
+title: SFDC System API
+mediaType: application/json
+
+#########
+#Types
+#########
+types:
+  User: !include user.raml  
+  OpportunitySplit: !include opportunitySplit.raml
+
+
+#######
+#APIS
+#######
+/health-check:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: {"status": "ok"}
+      300:
+      400:
+      500:
+#########
+#Billing
+#########              
+/billing:
+  /address:
+    put:
+      description: put a billing address record
+      body:
+        application/json:
+          example: {A}        
+      responses: 
+        201:
+          description: successful update
+          body:
+            application/json:
+              example: {A} #!!!
+    /{id}:
+      ##get-billing-address-by-id
+      uriParameters:
+        id:
+          type: string
+          description: SFDC Billing Address Id
+          example: id1
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/get-billing-address-by-id-result.json
+          300:
+          400:
+          500:
+  /addresses:
+    get:
+      ##get-billing-addresses-by-billing-address-ids
+      queryParameters: 
+         billing-address-ids: 
+           displayName: billing-address-ids
+           description: Used to filter the results by only returning matching billing-addresses
+           example: !include examples/param-ids.json
+           required: true
+      responses:
+        200:
+          body:
+            application/json: 
+              example: !include examples/get-billing-addresses-by-billing-address-ids-result.json
+        300:
+        400:
+        500:  
+    /modifieddate:
+      /{date}:
+        ##get-billing-addresses-by-last-modified-date
+        uriParameters:
+          date:
+            type: string
+            description: modified date
+            example: 2017-09-12T19:31:36.000Z
+        get:
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include examples/get-billing-addresses-by-modified-date.json
+            300:
+            400:
+            500:
+  /company:
+    get:
+      ###get-billing-company-by-oracle-id ???
+      queryParameters: 
+         oracleid: 
+           displayName: oracleid
+           description: Used to filter the results by only returning matching oracleid
+           example: oracleid1
+           required: true
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/get-billing-company-result.json
+        300:
+        400:
+        500:
+    put:
+      description: put a billing company record
+      body:
+        application/json:
+          example: {A}        
+      responses: 
+        201:
+          description: successful update
+          body:
+            application/json:
+              example: {A}  #!!!
+    /{id}:
+      ##get-billing-company-by-id      
+      uriParameters:
+        id:
+          type: string
+          description: SFDC Company Id
+          example: id1   
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/get-billing-company-result.json
+          300:
+          400:
+          500:
+  /companies:
+    get:
+      ##get-billing-companies-by-billing-company-ids
+      queryParameters: 
+         billing-company-ids: 
+           displayName: billing-company-ids
+           description: Used to filter the results by only returning matching billing-company-ids
+           example: !include examples/param-ids.json
+           required: true
+      responses:
+        200:
+          body:
+            application/json:
+                  example: !include examples/get-billing-companies-result.json
+        300:
+        400:
+        500:  
+    /modifieddate:
+      /{date}:
+        ##get-billing-companies-by-last-modified-date
+        uriParameters:
+          date:
+            type: string
+            description: modified date
+            example: 2017-09-12T19:31:36.000Z
+        get:
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include examples/get-billing-companies-result.json
+            300:
+            400:
+            500:               
+##############
+#datasiteone
+#############      
+/datasiteone:
+  /companies:
+    /billingAddresses:
+      get:
+        ##get-datasiteone-companies-by-billing-address-ids
+        queryParameters: 
+          billing-address-ids: 
+             displayName: billing-address-ids
+             description: Used to filter the results by only returning dso company matching projectid
+             example: !include examples/param-ids.json
+             required: true
+        responses:
+          200:
+            body:
+              application/json: 
+                example: !include examples/get-datasiteone-companies-by-billing-address-ids-result.json         
+          300:
+          400:
+          500: 
+    /billingCompanies:
+      get:
+        ##get-datasiteone-companies-by-billing-company-ids
+        queryParameters: 
+          billing-company-ids: 
+             displayName: billing-company-ids
+             description: Used to filter the results by only returning dso company matching companyids
+             example: !include examples/param-ids.json
+             required: true
+        responses:
+          200:
+            body:
+              application/json: 
+                example: !include examples/get-datasiteone-companies-by-billing-company-ids-result.json
+          300:
+          400:
+          500: 
+  /company:
+    get:
+      ##get-datasiteone-company-by-project-id
+      queryParameters: 
+         projectid: 
+           displayName: projectid
+           description: Used to filter the results by only returning dso company matching projectid
+           example: projectid1
+           required: true
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/get-datasiteone-company-by-project-id-result.json
+        300:
+        400:
+        500:
+    /{id}:
+      ##get-datasiteone-company-by-id
+      uriParameters:
+        id:
+          type: string
+          description: dso company id
+          example: id1
+          
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/get-datasiteone-company-by-id-result.json
+          300:
+          400:
+          500:
+    /history:
+      /{lastmaxcompanyhistoryid}:
+        ##get-company-history-by-last-max-id
+        uriParameters:
+          lastmaxcompanyhistoryid:
+            type: string
+            description:  Id
+            example: id1
+        get:
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include examples/get-datasiteone-company-history-result.json
+            300:
+            400:
+            500:
+      /yesterday:
+        get:
+          ##get-company-history-by-yesterday
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include examples/get-datasiteone-company-history-result.json
+            300:
+            400:
+            500:
+  /project:
+    put:
+      description: put a billing company record
+      body:
+        application/json:
+          example: {A}
+      responses: 
+        201:
+          description: successful update
+          body:
+            application/json:
+              example: {A} #!!!
+    /{projectid}:
+      ##get-datasiteone-project-by-project-id 
+      uriParameters:
+        projectid:
+          type: string
+          description: SF Project Id
+          example: id1
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/get-datasiteone-project-by-project-id-result.json
+          300:
+          400:
+          500:
+      /filterByStatuses:
+        description: filtered by aria project statuses
+        get:
+          ##get-datasiteone-project-by-project-id2
+          responses:
+            200:
+              body:
+                application/json: 
+                  example: !include examples/get-datasiteone-project-by-project-id2-result.json
+            300:  
+            400:
+            500:          
+    /history:
+      /{lastmaxprojecthistoryid}:
+        ##get-datasiteone-project-history-by-last-max-id
+        uriParameters:
+          lastmaxprojecthistoryid:
+            type: string
+            description: SFDC Project Id
+            example: id1
+        get:
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include examples/get-datasiteone-project-history-result.json
+            300:
+            400:
+            500:
+      /yesterday:
+        get:
+          ##get-datasiteone-project-history-by-yesterday
+          responses:
+            200:
+              body:
+                application/json:
+                  example: !include examples/get-datasiteone-project-history-result.json
+            300:
+            400:
+            500:
+### get-datasiteone-project-history-project-ids ???  
+#########
+#Users
+#########        
+/users:
+  get:
+    ##get-users-by-user-ids
+    queryParameters: 
+       userids: 
+         displayName: userids
+         description: Used to filter the results by only returning matching user-ids
+         example: !include examples/param-ids.json
+         required: true
+    responses:
+      200:
+        body:
+          application/json: 
+            example: !include examples/get-users-by-user-ids-result.json
+      300:
+      400:
+      500:  
+  
+###########
+#WorkOrders
+###########
+/workorder:
+  get:
+    ##get-work-orders-by-last-modified-date
+    queryParameters: 
+       lastModifiedDate: 
+         displayName: lastModifiedDate
+         description: Used to filter the results by only returning work orders since lastModified
+         example: 2017-09-13T19:31:36.000Z
+         required: true
+    responses:
+      200:
+        body:
+          application/json: 
+            example: !include examples/get-work-orders-result.json
+      300:
+      400:
+      500:            
